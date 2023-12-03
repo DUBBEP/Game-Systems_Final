@@ -1,18 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    float last 
+    float 
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         
+
+        // if camera position increases by a certain ammount spawn the platforms
+        if (Camera.main.transform.position.y > )
     }
 }
