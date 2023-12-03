@@ -811,7 +811,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72385f5cda9eef147ba95f5866dd824f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPosition: {fileID: 0}
+  playerPosition: {fileID: 136312674}
 --- !u!1001 &1472591053
 PrefabInstance:
   m_ObjectHideFlags: 0
