@@ -11,8 +11,6 @@ public class PlayerBehavior : MonoBehaviour
     public int moveSpeed;
     public int MaxSpeed;
 
-    public int bounceForce;
-
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -33,11 +31,15 @@ public class PlayerBehavior : MonoBehaviour
 
         float leftBoundry = Camera.main.ScreenToWorldPoint(new Vector2(0, 0)).x;
         float rightBoundry = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, 0)).x;
+        float bottomBoundry = Camera.main.ScreenToWorldPoint(new Vector2(0, 0)).y;
 
         if (transform.position.x < leftBoundry - 1)
             transform.position = new Vector3(rightBoundry, transform.position.y, 0);
         else if (transform.position.x > rightBoundry + 1)
             transform.position = new Vector3(leftBoundry, transform.position.y, 0);
+    
+        if (transform.position.y < bottomBoundry - 10)
+            EndGame();
     }
 
     private void FixedUpdate()
@@ -50,7 +52,13 @@ public class PlayerBehavior : MonoBehaviour
         if (collision.CompareTag("Platform") && rb.velocity.y < 0)
         {
             rb.velocity = new Vector2(rb.velocity.x, 0);
-            rb.AddForce(new Vector2(0, bounceForce), ForceMode2D.Impulse);
+            rb.AddForce(new Vector2(0, collision.GetComponent<Platform>().bounceForce), ForceMode2D.Impulse);
         }
+    }
+
+    void EndGame()
+    {
+        // add end game functionality
+        
     }
 }

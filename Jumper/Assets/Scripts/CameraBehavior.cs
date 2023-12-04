@@ -5,13 +5,14 @@ using UnityEngine;
 
 public class CameraBehavior : MonoBehaviour
 {
+    public float offSet;
     public Transform playerPosition;
 
     private void Update()
     {
-        if (playerPosition.position.y > this.transform.position.y)
+        if (playerPosition.position.y > transform.position.y + offSet)
         {
-            this.transform.position = new Vector3(transform.position.x, playerPosition.position.y, transform.position.z);
+            transform.position = new Vector3(transform.position.x, playerPosition.position.y - offSet, transform.position.z);
         }
     }
 }
