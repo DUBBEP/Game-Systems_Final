@@ -12,7 +12,6 @@ public class FirstPresonBehavior : MonoBehaviour
 
     private float rotationX = 0;
 
-
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -35,10 +34,13 @@ public class FirstPresonBehavior : MonoBehaviour
         rotationX = Mathf.Clamp(rotationX, minYAngle, maxYAngle);
 
         transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
-        transform.rotation *= Quaternion.Euler(0, mouseX * sensitivity, 0); 
-
+        transform.rotation *= Quaternion.Euler(0, mouseX * sensitivity, 0);
     }
 }
+
+
+
+
 
 
 
