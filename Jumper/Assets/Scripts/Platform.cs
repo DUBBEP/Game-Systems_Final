@@ -5,11 +5,12 @@ using UnityEngine;
 public class Platform : MonoBehaviour
 {
     public float bounceForce;
+    public float cullOffSet;
 
     private void Update()
     {
-        if (transform.position.y < Camera.main.ScreenToWorldPoint(new Vector2(0, 0)).y - 8)
+        float cullingDistance = GameManager.instance.highestPlayerPosition - cullOffSet;
+        if (transform.position.y < cullingDistance)
             Destroy(gameObject);
-
     }
 }
