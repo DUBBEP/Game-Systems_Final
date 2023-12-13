@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviourPun
     [Header("Info")]
     private int playersInGame;
     public float highestPlayerPosition;
+    public PlayerBehavior highestPlayer;
+    public int postGameTime;
 
     [Header("Platforms")]
     private int platSpawnOffSet = 5;
@@ -92,10 +94,53 @@ public class GameManager : MonoBehaviourPun
 
     [PunRPC]
 
-    public void UpdatePlatformTrigger(float highestY)
+    public void UpdatePlatformTrigger(float highestY, int playerId)
     {
         highestPlayerPosition = highestY;
         platSpawnTrigger = highestY - platSpawnRate;
+        highestPlayer = GetPlayer(playerId);
     }
 
+    public PlayerBehavior GetPlayer(int playerId)
+    {
+        foreach (PlayerBehavior player in players)
+        {
+            if (player != null && player.id == playerId)
+                return player;
+        }
+        return null;
+    }
+
+    public PlayerBehavior GetPlayer(GameObject playerObject)
+    {
+        foreach (PlayerBehavior player in players)
+        {
+            if (player != null && player.gameObject == playerObject)
+                return player;
+        }
+        return null;
+    }
+
+    public void CheckWinCondition()
+    {
+        if (alivePlayers == 1)
+        {
+            photonView.RPC("WinGame", RpcTarget.All, players.First(x => !x.dead).id);
+        }
+    }
+
+    [PunRPC]
+    void WinGame(int winningPlayer)
+    {
+        // set the UI win text
+
+
+        Invoke("GoBackToMenu", postGameTime);
+    }
+
+    void GoBackToMenu()
+    {
+        Destroy(NetworkManager.instance.gameObject);
+        NetworkManager.instance.ChangeScene("Menu");
+    }
 }

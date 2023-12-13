@@ -18,6 +18,7 @@ public class PlayerBehavior : MonoBehaviourPun
     public int MaxSpeed;
     public int fastFallSpeed;
     public int defaultFallSpeed;
+    public bool dead;
 
     [Header("Components")]
     private Rigidbody2D rb;
@@ -34,6 +35,7 @@ public class PlayerBehavior : MonoBehaviourPun
     {
         id = player.ActorNumber;
         photonPlayer = player;
+        dead = false;
 
         GameManager.instance.players[id - 1] = this;
 
@@ -118,7 +120,7 @@ public class PlayerBehavior : MonoBehaviourPun
             Debug.Log("Highest Top of Screen:" + thisTopOfScreen);
             if (isHighestPlayer)
             {
-                GameManager.instance.photonView.RPC("UpdatePlatformTrigger", RpcTarget.All, thisTopOfScreen);
+                GameManager.instance.photonView.RPC("UpdatePlatformTrigger", RpcTarget.All, thisTopOfScreen, id);
                 GameManager.instance.SpawnPlatform(thisTopOfScreen);
             }
         }
@@ -141,6 +143,14 @@ public class PlayerBehavior : MonoBehaviourPun
     void Die()
     {
         // add end game functionality
-        
+        dead = true;
+
+        GameManager.instance.alivePlayers--;
+
+        // host will chekc the win condition
+        if (PhotonNetwork.IsMasterClient)
+        {
+            GameManager.instance.CheckWinCondition();
+        }
     }
 }

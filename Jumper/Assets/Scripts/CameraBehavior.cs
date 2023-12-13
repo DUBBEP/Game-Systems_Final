@@ -10,6 +10,7 @@ public class CameraBehavior : MonoBehaviour
 
     private void Update()
     {
+
         if (!GameManager.instance.playersSpawned)
             return;
 

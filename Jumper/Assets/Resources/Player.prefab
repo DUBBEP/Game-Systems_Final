@@ -211,6 +211,7 @@ MonoBehaviour:
   MaxSpeed: 10
   fastFallSpeed: 25
   defaultFallSpeed: 2
+  dead: 0
 --- !u!114 &5890360085460622857
 MonoBehaviour:
   m_ObjectHideFlags: 0
