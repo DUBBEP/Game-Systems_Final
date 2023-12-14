@@ -1122,7 +1122,7 @@ GameObject:
   - component: {fileID: 3801853868163730872}
   - component: {fileID: 3801853868163730874}
   m_Layer: 0
-  m_Name: PlayFabSystem
+  m_Name: PlayFabSystem 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

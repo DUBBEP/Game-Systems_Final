@@ -28,13 +28,12 @@ public class GameManager : MonoBehaviourPun
     public bool playersSpawned = false;
     
 
-    private GameUI gameUI;
+    
     public static GameManager instance;
     private void Awake()
     {
         instance = this;
         platSpawnTrigger = Camera.main.ScreenToWorldPoint(new Vector2(0, Screen.height)).y;
-        gameUI = GetComponent<GameUI>();
     }
 
     private void Start()
@@ -110,7 +109,6 @@ public class GameManager : MonoBehaviourPun
         highestPlayer = GetPlayer(playerId);
 
         Camera.main.GetComponent<CameraBehavior>().SetHighestPlayer(highestPlayer);
-        gameUI.altitudeText.text = "HighestY: " + highestPlayerPosition;
     }
 
     public PlayerBehavior GetPlayer(int playerId)

@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class PlayerBehavior : MonoBehaviourPun
+public class PlayerBehavior : MonoBehaviourPunCallbacks, IPunObservable
 {
     [Header("Info")]
     public int id;
@@ -164,6 +164,19 @@ public class PlayerBehavior : MonoBehaviourPun
     {
         GameManager.instance.alivePlayers--;
         GameManager.instance.CheckWinCondition();
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(GameUI.instance.altitudeText);
+
+        }
+        else if (stream.IsReading)
+        {
+            GameUI.instance.altitudeText.text = (string)stream.ReceiveNext();
+        }
     }
 }
 

@@ -30,6 +30,12 @@ public class Menu : MonoBehaviourPunCallbacks, ILobbyCallbacks
     private List<GameObject> roomButtons = new List<GameObject>();
     private List<RoomInfo> roomList = new List<RoomInfo>();
 
+    public static Menu instance;
+
+    private void Awake()
+    {
+        instance = this;
+    }
     void Start()
     {
         // disable the menu buttons at start
@@ -52,7 +58,7 @@ public class Menu : MonoBehaviourPunCallbacks, ILobbyCallbacks
         }
     }
 
-    void SetScreen(GameObject screen)
+    public void SetScreen(GameObject screen)
     {
         // diable all other screns
         mainScreen.SetActive(false);
