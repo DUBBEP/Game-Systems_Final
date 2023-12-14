@@ -10,6 +10,7 @@ public class PlayerBehavior : MonoBehaviourPun
     public int id;
     private float xInput;
     private bool inFastFall;
+    public bool LocalPlayer;
 
     [Header("ForPlatformSpawning")]
 
@@ -23,6 +24,8 @@ public class PlayerBehavior : MonoBehaviourPun
     [Header("Components")]
     private Rigidbody2D rb;
     public Player photonPlayer;
+    public SpriteRenderer playerSprite;
+
 
     private void Awake()
     {
@@ -35,6 +38,7 @@ public class PlayerBehavior : MonoBehaviourPun
     {
         id = player.ActorNumber;
         photonPlayer = player;
+        LocalPlayer = false;
         dead = false;
 
         GameManager.instance.players[id - 1] = this;
@@ -43,16 +47,22 @@ public class PlayerBehavior : MonoBehaviourPun
         if (!photonView.IsMine)
         {
             rb.isKinematic = true;
+            playerSprite.color = Color.grey;
         }
         else
         {
-            Camera.main.GetComponent<CameraBehavior>().playerPosition = this.transform;
+            LocalPlayer = true;
+            Camera.main.GetComponent<CameraBehavior>().targetplayer = this;
             // GameUI.instance.Initialize(this);
         }
+
     }
 
     private void Update()
     {
+        if (dead)
+            return;
+
         Move();
         CheckForCameraBoundry();
         CheckToSpawnPlatforms();
@@ -101,7 +111,7 @@ public class PlayerBehavior : MonoBehaviourPun
         else if (transform.position.x > rightBoundry + 1)
             transform.position = new Vector3(leftBoundry, transform.position.y, 0);
 
-        if (transform.position.y < bottomBoundry - 10)
+        if (transform.position.y < bottomBoundry - 10 && LocalPlayer)
             Die();
     }
 
@@ -144,13 +154,17 @@ public class PlayerBehavior : MonoBehaviourPun
     {
         // add end game functionality
         dead = true;
+        GetComponent<BoxCollider2D>().enabled = false;
 
+        photonView.RPC("TrackDeath", RpcTarget.MasterClient);
+    }
+
+    [PunRPC]
+    void TrackDeath()
+    {
         GameManager.instance.alivePlayers--;
-
-        // host will chekc the win condition
-        if (PhotonNetwork.IsMasterClient)
-        {
-            GameManager.instance.CheckWinCondition();
-        }
+        GameManager.instance.CheckWinCondition();
     }
 }
+
+

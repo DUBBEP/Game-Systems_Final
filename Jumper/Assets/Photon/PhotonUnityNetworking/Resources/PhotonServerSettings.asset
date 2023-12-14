@@ -43,6 +43,9 @@ MonoBehaviour:
   - SpawnPlayer
   - SpawnPlatform
   - UpdatePlatformTrigger
+  - WinGame
+  - EndGame
+  - TrackDeath
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

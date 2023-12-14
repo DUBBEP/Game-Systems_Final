@@ -27,11 +27,14 @@ public class GameManager : MonoBehaviourPun
     public int alivePlayers;
     public bool playersSpawned = false;
     
+
+    private GameUI gameUI;
     public static GameManager instance;
     private void Awake()
     {
         instance = this;
         platSpawnTrigger = Camera.main.ScreenToWorldPoint(new Vector2(0, Screen.height)).y;
+        gameUI = GetComponent<GameUI>();
     }
 
     private void Start()
@@ -41,6 +44,7 @@ public class GameManager : MonoBehaviourPun
         playersSpawned = false;
 
         photonView.RPC("ImInGame", RpcTarget.AllBuffered);
+
     }
 
     [PunRPC]
@@ -63,6 +67,8 @@ public class GameManager : MonoBehaviourPun
         // initialize the player for all other players
         playerObj.GetComponent<PlayerBehavior>().photonView.RPC("Initialize", RpcTarget.All, PhotonNetwork.LocalPlayer);
 
+        highestPlayer = players[0];
+
         Invoke("SetSpawnedTrue", 0.5f);
     }
 
@@ -75,19 +81,22 @@ public class GameManager : MonoBehaviourPun
     public void SpawnPlatform(float highestY)
     {
         float ySpawn = highestY + platSpawnOffSet;
-        
-        int groupCount = (1000 - (int)highestY) / 250;
-        
-        if (highestY > 1000)
-            groupCount = 1;
 
+        int groupCount = 1;
+
+        if (highestY < 150)
+            groupCount = 1;
+        else if (highestY < 600)
+            groupCount = Random.Range(1, 2);
+        else
+            groupCount = 1;
 
         float leftBoundry = Camera.main.ScreenToWorldPoint(new Vector2(0, 0)).x;
         float rightBoundry = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, 0)).x;
 
         for (int i = 0; i < groupCount; i++)
         {
-            Vector3 randomOffSet = new Vector3(Random.Range(leftBoundry + 4, rightBoundry - 4), Random.Range(ySpawn - 3, ySpawn + 6), 0);
+            Vector3 randomOffSet = new Vector3(Random.Range(leftBoundry + 4, rightBoundry - 4), Random.Range(ySpawn - 3, ySpawn + 4), 0);
             PhotonNetwork.Instantiate(platformPrefabLocation, randomOffSet, Quaternion.identity);
         }
     }
@@ -99,6 +108,9 @@ public class GameManager : MonoBehaviourPun
         highestPlayerPosition = highestY;
         platSpawnTrigger = highestY - platSpawnRate;
         highestPlayer = GetPlayer(playerId);
+
+        Camera.main.GetComponent<CameraBehavior>().SetHighestPlayer(highestPlayer);
+        gameUI.altitudeText.text = "HighestY: " + highestPlayerPosition;
     }
 
     public PlayerBehavior GetPlayer(int playerId)
@@ -121,19 +133,38 @@ public class GameManager : MonoBehaviourPun
         return null;
     }
 
+    public PlayerBehavior GetLivingPlayer()
+    {
+        foreach (PlayerBehavior player in players)
+        {
+            if (!player.dead)
+                return player;
+        }
+        return null;
+    }
+
+    public PlayerBehavior GetLocalPlayer()
+    {
+        foreach (PlayerBehavior player in players)
+        {
+            if (player.LocalPlayer)
+                return player;
+        }
+        return null;
+    }
+
     public void CheckWinCondition()
     {
-        if (alivePlayers == 1)
+        if (alivePlayers == 0)
         {
-            photonView.RPC("WinGame", RpcTarget.All, players.First(x => !x.dead).id);
+            photonView.RPC("EndGame", RpcTarget.All, highestPlayer.id);
         }
     }
 
     [PunRPC]
-    void WinGame(int winningPlayer)
+    void EndGame(int winningPlayer)
     {
         // set the UI win text
-
 
         Invoke("GoBackToMenu", postGameTime);
     }
@@ -141,6 +172,6 @@ public class GameManager : MonoBehaviourPun
     void GoBackToMenu()
     {
         Destroy(NetworkManager.instance.gameObject);
-        NetworkManager.instance.ChangeScene("Menu");
+        NetworkManager.instance.ChangeScene("Title");
     }
 }
