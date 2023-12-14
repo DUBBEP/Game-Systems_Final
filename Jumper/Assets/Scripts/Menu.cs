@@ -35,6 +35,7 @@ public class Menu : MonoBehaviourPunCallbacks, ILobbyCallbacks
     private void Awake()
     {
         instance = this;
+
     }
     void Start()
     {

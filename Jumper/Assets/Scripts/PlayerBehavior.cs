@@ -11,8 +11,11 @@ public class PlayerBehavior : MonoBehaviourPunCallbacks, IPunObservable
     private float xInput;
     private bool inFastFall;
     public bool LocalPlayer;
+    public int finalHeight;
 
-    [Header("ForPlatformSpawning")]
+    [Header("audio")]
+    public AudioSource bounce;
+    public AudioSource fallWhoosh;
 
     [Header("Stats")]
     public int moveSpeed;
@@ -83,6 +86,7 @@ public class PlayerBehavior : MonoBehaviourPunCallbacks, IPunObservable
 
     void StartFastFall()
     {
+        fallWhoosh.Play();
         inFastFall = true;
         rb.velocity = new Vector3(rb.velocity.x, 0, 0);
     }
@@ -147,13 +151,17 @@ public class PlayerBehavior : MonoBehaviourPunCallbacks, IPunObservable
         {
             rb.velocity = new Vector2(rb.velocity.x, 0);
             rb.AddForce(new Vector2(0, collision.GetComponent<Platform>().bounceForce), ForceMode2D.Impulse);
+            bounce.Play();
         }
+        
     }
 
     void Die()
     {
         // add end game functionality
         dead = true;
+        finalHeight = (int)Camera.main.transform.position.y + (int)Camera.main.GetComponent<CameraBehavior>().offSet;
+
         GetComponent<BoxCollider2D>().enabled = false;
 
         photonView.RPC("TrackDeath", RpcTarget.MasterClient);
@@ -170,12 +178,12 @@ public class PlayerBehavior : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (stream.IsWriting)
         {
-            stream.SendNext(GameUI.instance.altitudeText);
+            stream.SendNext(GameManager.instance.highestPlayerPosition);
 
         }
         else if (stream.IsReading)
         {
-            GameUI.instance.altitudeText.text = (string)stream.ReceiveNext();
+            GameManager.instance.highestPlayerPosition = (float)stream.ReceiveNext();
         }
     }
 }

@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Platform
+  - Collectable
   layers:
   - Default
   - TransparentFX
@@ -45,9 +46,9 @@ TagManager:
   - name: Background
     uniqueID: 1706633181
     locked: 0
-  - name: Platform
-    uniqueID: 1166872163
-    locked: 0
   - name: Player
     uniqueID: 2867562137
+    locked: 0
+  - name: Platform
+    uniqueID: 1166872163
     locked: 0

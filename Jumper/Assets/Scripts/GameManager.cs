@@ -156,6 +156,7 @@ public class GameManager : MonoBehaviourPun
         if (alivePlayers == 0)
         {
             photonView.RPC("EndGame", RpcTarget.All, highestPlayer.id);
+
         }
     }
 
@@ -164,6 +165,9 @@ public class GameManager : MonoBehaviourPun
     {
         // set the UI win text
 
+        Leaderboard.instance.SetLeaderboardEntry((int)GetLocalPlayer().finalHeight);
+        Leaderboard.instance.DisplayLeaderboard();
+        Leaderboard.instance.leaderboardCanvas.SetActive(true);
         Invoke("GoBackToMenu", postGameTime);
     }
 
@@ -171,5 +175,6 @@ public class GameManager : MonoBehaviourPun
     {
         Destroy(NetworkManager.instance.gameObject);
         NetworkManager.instance.ChangeScene("Title");
+        Leaderboard.instance.leaderboardCanvas.SetActive(false);
     }
 }
